@@ -39,6 +39,15 @@ Word* getWord(string text);
 Meaning* getMeaning(Word &word, string textMeaning);
 Instance* getExammple(Meaning &meaning, string textExample);
 
+string getWordItem(string text);
+
+/*
+*	string utility
+*/
+string utilityGetSubString(string s);
+string getTextWordItem(string s);
+
+
 /*
  *  Function Implementation
  *	You need to write your own code in //TO DO 
@@ -164,7 +173,9 @@ bool search(Dictionary &dict, string name, Word &word) {
 Word* getWord(string text) {
 	Word *word = new Word();
 	word->size = 1;
-	word->item="present";
+	
+
+	word->item = getWordItem(text);
 
 	// get meanings
 	getMeaning(*word, text);
@@ -202,4 +213,39 @@ Instance* getExammple(Meaning &meaning, string textExample) {
 	// append example
 	meaning.examples[0] = *instance;
 	return instance;
+}
+
+
+string getWordItem(string text) {
+	string textWordItem = getTextWordItem(text);
+	string item = utilityGetSubString(textWordItem);
+	return item;
+}
+
+
+string utilityGetSubString(string s) {
+	char QUATOR = '"';	
+	int start = 0;
+	int end = 0;
+	for(int i = 0; i < s.length(); i++) {
+		if(s[i] == QUATOR) {
+			if(start == 0) {
+				start = i + 1;
+			} else {
+				end = i;
+				break;
+			}
+		}
+	}
+	return s.substr(start, end);
+}
+
+string getTextWordItem(string s) {
+	istringstream f(s);
+    string line;
+	getline(f, line);
+	return line;
+    //while (getline(f, line)) {
+    //    
+    //}
 }
