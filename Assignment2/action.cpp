@@ -40,6 +40,7 @@ Meaning set_meaning(string line);
 
 string getWordItem(string text);
 WordType set_word_type(string line);
+void doSelectionSort(Dictionary &dict);
 
 /*
 *	string utility
@@ -102,6 +103,9 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 			if(!isExists) {
 				insert(dict, *word);
 			}
+
+			// sort
+			doSelectionSort(dict);
 			
 			break;
 		}
@@ -181,6 +185,12 @@ bool remove_by_crystal(Dictionary &dict) {
  * @return true if success, otherwise return false
  */
 bool search(Dictionary &dict, string name, Word &word) {
+
+	string s1 = "abc";
+	string s2 = "abcd";
+	string s3 = "Abc";
+
+
 	// TODO
 	for(int i = 0; i < dict.size; i++) {
 		if(dict.words[i].item == name) {
@@ -315,4 +325,19 @@ string utilityGetSubString(string s, char cStart, char cEnd) {
 		}
 	}
 	return s.substr(start, end);
+}
+
+
+void doSelectionSort(Dictionary &dict) {
+	for (int i = 0; i < dict.size - 1; i++)
+        {
+            int index = i;
+			for (int j = i + 1; j < dict.size; j++)
+				if (dict.words[j].item < dict.words[index].item)
+                    index = j;
+      
+            Word wordSmaller = dict.words[index]; 
+            dict.words[index] = dict.words[i];
+            dict.words[i] = wordSmaller;
+        }
 }
