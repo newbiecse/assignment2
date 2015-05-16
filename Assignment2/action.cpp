@@ -74,6 +74,8 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 		switch (type) {
 		case INSERT: {
 			// TODO
+			Word *word = getWord(value);
+			insert(dict, *word);
 			break;
 		}
 		case REMOVE: {
@@ -107,6 +109,7 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
  */
 bool insert(Dictionary &dict, Word new_word) {
 	// TODO
+	dict.words[0] = new_word;
 	return false;
 }
 
@@ -144,4 +147,44 @@ bool remove_by_crystal(Dictionary &dict) {
 bool search(Dictionary &dict, string name, Word &word) {
 	// TODO
 	return false;
+}
+
+/*
+*	get word from string
+*/
+Word* getWord(string text) {
+	Word *word = new Word();
+	word->size = 1;
+	word->item="present";
+
+	return word;
+}
+
+/*
+*	get meaning from string
+*/
+Meaning* getMeaning(Word &word, string textMeaning) {
+	// init meaning
+	Meaning *meaning = new Meaning();
+	meaning->size = 1;
+	meaning->definition = "difinition meaning";
+	meaning->type = NOUN;
+
+	// append meaning
+	word.meaning[0] = *meaning;
+	return meaning;
+}
+
+/*
+*	get example from string
+*/
+Instance* get(Meaning &meaning, string textExample) {
+	// init example
+	Instance *instance = new Instance();
+	instance->sentence = "sentence instance";
+	instance->translation = "translation instance";	
+
+	// append example
+	meaning.examples[0] = *instance;
+	return instance;
 }
