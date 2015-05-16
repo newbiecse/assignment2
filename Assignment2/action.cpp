@@ -124,9 +124,17 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
  * @return true if success, otherwise return false
  */
 bool insert(Dictionary &dict, Word new_word) {
-	// TODO
-	dict.size = 1;
-	dict.words[0] = new_word;
+
+	if(dict.size < 0) {
+		dict.size = 0;
+	}
+
+	// add new word
+	dict.words[dict.size] = new_word;
+
+	// update size
+	dict.size ++;
+
 	return false;
 }
 
@@ -163,6 +171,9 @@ bool remove_by_crystal(Dictionary &dict) {
  */
 bool search(Dictionary &dict, string name, Word &word) {
 	// TODO
+	for(int i = 0; i < dict.size; i++) {
+		
+	}
 	return false;
 }
 
@@ -221,13 +232,6 @@ Meaning set_meaning(string line) {
 
 	// word type
 	meaning->type = set_word_type(line);
-
-	// definition
-	// meaning->definition = get_definition(line);
-
-	// num examples
-	meaning->size = 1;
-
 
 	bool isBegin = true;
 	bool isHasDefition = false;
@@ -292,7 +296,7 @@ string utilityGetSubString(string s, char cStart, char cEnd) {
 		if(start == 0 && s[i] == cStart) {
 			start = i + 1;
 		} else if (s[i] == cEnd) {
-			end = i - 1;
+			end = i - start;
 			break;
 		}
 	}
