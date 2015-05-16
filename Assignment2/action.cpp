@@ -41,6 +41,7 @@ Instance* getExammple(Meaning &meaning, string textExample);
 
 string getWordItem(string text);
 WordType set_word_type(string line);
+string get_definition(string line);
 
 /*
 *	string utility
@@ -171,9 +172,11 @@ bool search(Dictionary &dict, string name, Word &word) {
 *	get word from string
 */
 Word* getWord(string text) {
-	Word *word = new Word();
-	word->size = 1;	
 
+	// init
+	Word *word = new Word();
+	
+	// temp variables
 	istringstream f(text);
     string line;
 
@@ -185,7 +188,11 @@ Word* getWord(string text) {
 	int i = 0;
     while (getline(f, line)) {
 		word->meaning[i] = set_meaning(line);
+		i++;
     }
+
+	// word number meaning
+	word->size = i;	
 
 	return word;
 }
@@ -218,17 +225,66 @@ Meaning set_meaning(string line) {
 	meaning->type = set_word_type(line);
 
 	// definition
-	meaning->definition = "difinition meaning";
+	// meaning->definition = get_definition(line);
 
 	// num examples
 	meaning->size = 1;
 
-	// examples
-	getExammple(*meaning, line);
+
+	bool isBegin = true;
+	bool isHasDefition = false;
+	bool isCompleteExample = false;
+	int nExamples = 0;
+
+	int nStart = 0;
+	int nEnd = 0;
+
+	string sText = "";
+
+
+	for(int i = 0; i < line.length(); i++) {
+		// special charater: "
+		if(line[i] == '"') {
+			if(isBegin) {
+				// begin
+				isBegin = false;
+				nStart = i + 1;
+			} else {
+				// end
+				isBegin = true;
+				nEnd = i - 1;
+				sText = line.substr(nStart, nEnd);
+				if(!isHasDefition) {
+					// definition
+					isHasDefition = true;
+					 meaning->definition = sText;
+				} else {
+					// examples
+					if( !isCompleteExample ) {
+						// sentence
+						meaning->examples[nExamples].sentence = sText;
+						isCompleteExample = true;
+					} else {
+						// translation
+						nExamples ++;
+						meaning->examples[nExamples].translation = sText;
+						isCompleteExample = false;
+					}					
+				}
+			}
+		} // end if
+	} // end for
+
+	// number examples
+	meaning->size = nExamples;
 
 	return *meaning;
 }
 
+string get_definition(string line) {
+	string definition = utilityGetSubString(line, '"', '"');
+	return definition;
+}
 /*
 *	get example from string
 */
@@ -257,7 +313,7 @@ string utilityGetSubString(string s, char cStart, char cEnd) {
 		if(start == 0 && s[i] == cStart) {
 			start = i + 1;
 		} else if (s[i] == cEnd) {
-			end = i;
+			end = i - 1;
 			break;
 		}
 	}
