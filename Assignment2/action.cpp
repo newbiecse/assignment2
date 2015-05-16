@@ -91,7 +91,18 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 		case INSERT: {
 			// TODO
 			Word *word = getWord(value);
-			insert(dict, *word);
+
+			// word hasn't meaning or example
+			// hasn't implement yet
+
+			// word already exists
+			bool isExists = search(dict, word->item, *word);
+
+			// insert
+			if(!isExists) {
+				insert(dict, *word);
+			}
+			
 			break;
 		}
 		case REMOVE: {
@@ -172,7 +183,10 @@ bool remove_by_crystal(Dictionary &dict) {
 bool search(Dictionary &dict, string name, Word &word) {
 	// TODO
 	for(int i = 0; i < dict.size; i++) {
-		
+		if(dict.words[i].item == name) {
+			word = dict.words[i];
+			return true;
+		}
 	}
 	return false;
 }
