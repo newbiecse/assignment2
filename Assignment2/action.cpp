@@ -32,6 +32,14 @@
 #include "dictionary.h"
 
 /*
+*	define methods
+*/
+
+Word* getWord(string text);
+Meaning* getMeaning(Word &word, string textMeaning);
+Instance* getExammple(Meaning &meaning, string textExample);
+
+/*
  *  Function Implementation
  *	You need to write your own code in //TO DO 
  *	You could change or write any code in this file. However, you should not 
@@ -109,6 +117,7 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
  */
 bool insert(Dictionary &dict, Word new_word) {
 	// TODO
+	dict.size = 1;
 	dict.words[0] = new_word;
 	return false;
 }
@@ -157,6 +166,9 @@ Word* getWord(string text) {
 	word->size = 1;
 	word->item="present";
 
+	// get meanings
+	getMeaning(*word, text);
+
 	return word;
 }
 
@@ -170,6 +182,9 @@ Meaning* getMeaning(Word &word, string textMeaning) {
 	meaning->definition = "difinition meaning";
 	meaning->type = NOUN;
 
+	// get examples
+	getExammple(*meaning, textMeaning);
+
 	// append meaning
 	word.meaning[0] = *meaning;
 	return meaning;
@@ -178,7 +193,7 @@ Meaning* getMeaning(Word &word, string textMeaning) {
 /*
 *	get example from string
 */
-Instance* get(Meaning &meaning, string textExample) {
+Instance* getExammple(Meaning &meaning, string textExample) {
 	// init example
 	Instance *instance = new Instance();
 	instance->sentence = "sentence instance";
