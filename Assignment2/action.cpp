@@ -1,5 +1,5 @@
 /*
- * Created by: Dinh Quang Tuan
+ * Modified by: NGUYEN VAN TAN
  * Created date: May 4 2015
  * Project: assignment 2 - programming fundamental
  * Description: this file implements for basic functions on Dictionary 
@@ -233,7 +233,7 @@ Meaning set_meaning(string line) {
 
 	bool isBegin = true;
 	bool isHasDefition = false;
-	bool isCompleteExample = false;
+	bool isCompleteExample = true;
 	int nExamples = 0;
 
 	int nStart = 0;
@@ -252,7 +252,7 @@ Meaning set_meaning(string line) {
 			} else {
 				// end
 				isBegin = true;
-				nEnd = i - 1;
+				nEnd = i - nStart;
 				sText = line.substr(nStart, nEnd);
 				if(!isHasDefition) {
 					// definition
@@ -260,15 +260,15 @@ Meaning set_meaning(string line) {
 					 meaning->definition = sText;
 				} else {
 					// examples
-					if( !isCompleteExample ) {
+					if( isCompleteExample ) {
 						// sentence
 						meaning->examples[nExamples].sentence = sText;
-						isCompleteExample = true;
-					} else {
-						// translation
-						nExamples ++;
-						meaning->examples[nExamples].translation = sText;
 						isCompleteExample = false;
+					} else {
+						// translation						
+						meaning->examples[nExamples].translation = sText;
+						isCompleteExample = true;
+						nExamples ++;
 					}					
 				}
 			}
