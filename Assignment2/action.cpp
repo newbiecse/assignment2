@@ -70,16 +70,48 @@ int nIndexSearch = 0;
  */
 void load_dictionary(Dictionary &dict) {
 	// open text file
-	FILE* fp = fopen(DICT_FILE, "r");
+	// FILE* fp = fopen(DICT_FILE, "r");
 	// check if file is empty
-	if (fp == NULL) {
+	//if (fp == NULL) {
+	//	dict.size = 0;
+	//	return;
+	//}
+	//fclose(fp);
+
+	ifstream dictFile(DICT_FILE);
+	string str;
+
+	int i = 0;
+	string value = "";
+	while (std::getline(dictFile, str))
+    {     
+		if(str.substr(0, 2) == "<i") {		
+			if(i > 0) {
+				Word *word = getWord(value);
+				insert(dict, *word);
+				value = "";
+			}		
+		}
+		value.append(str);
+		value.append("\n");
+		i++;
+    }
+
+	if(i > 0) {
+		Word *word = getWord(value);
+		insert(dict, *word);
+		value = "";
+	}
+
+	if(i == 0) {
 		dict.size = 0;
 		return;
 	}
-	
-	// TODO: read text file and parse text into dict structure
 
-	fclose(fp);
+	dictFile.close();
+
+
+	
 }
 
 /*
@@ -90,6 +122,10 @@ void load_dictionary(Dictionary &dict) {
  * @param outFile: The steam output file
  */
 void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
+
+	// load word from dictionary
+	//load_dictionary(dict);
+
 	for (int i = 0; i < actions.size; ++i) {
 		ActionType type = actions.list[i].type; // action type
 		string value = actions.list[i].value; // action parameters
