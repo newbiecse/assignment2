@@ -37,11 +37,9 @@
 
 Word* getWord(string text);
 Meaning set_meaning(string line);
-Instance* getExammple(Meaning &meaning, string textExample);
 
 string getWordItem(string text);
 WordType set_word_type(string line);
-string get_definition(string line);
 
 /*
 *	string utility
@@ -280,25 +278,6 @@ Meaning set_meaning(string line) {
 
 	return *meaning;
 }
-
-string get_definition(string line) {
-	string definition = utilityGetSubString(line, '"', '"');
-	return definition;
-}
-/*
-*	get example from string
-*/
-Instance* getExammple(Meaning &meaning, string textExample) {
-	// init example
-	Instance *instance = new Instance();
-	instance->sentence = "sentence instance";
-	instance->translation = "translation instance";	
-
-	// append example
-	meaning.examples[0] = *instance;
-	return instance;
-}
-
 
 string getWordItem(string textWordItem) {
 	string item = utilityGetSubString(textWordItem, '"', '"');
