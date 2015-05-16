@@ -42,6 +42,7 @@ string getWordItem(string text);
 WordType set_word_type(string line);
 void doSelectionSort(Dictionary &dict);
 void removeByIndex(Dictionary &dict, int index);
+bool isTangGiamTuanHoan(string item);
 
 /*
 *	string utility
@@ -121,6 +122,7 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 		}
 		case CRYSTAL: {
 			// TODO
+			remove_by_crystal(dict);
 			break;
 		}
 		case SEARCH: {
@@ -185,6 +187,12 @@ bool remove(Dictionary &dict, string item) {
  */
 bool remove_by_crystal(Dictionary &dict) {
 	// TODO
+	for(int i = 0; i < dict.size; i++) {
+		if(isTangGiamTuanHoan(dict.words[i].item)) {
+			removeByIndex(dict, i);
+		}
+	}
+	
 	return false;
 }
 
@@ -362,4 +370,34 @@ void removeByIndex(Dictionary &dict, int index) {
     }
 	// update Dictionary size
 	dict.size --;
+}
+
+bool isTangGiamTuanHoan(string item) {
+
+	int len = item.length();
+	if(len == 0 || len == 1) {
+		return true;
+	} else if(len == 2) {
+		if(item[0] != item[1]) {
+			return true;
+		}
+	}
+
+	if(item[0] < item[1]) {
+		for(int i = 1; i < len - 1; i++) {
+			// Ai-1 < Ai -> Ai > Ai+1 
+			if( ! (item[i-1] < item[i] && item[i] > item[i+1]) ) {
+				return false;
+			}
+		}
+	} else {
+		for(int i = 1; i < len - 1; i++) {
+			// Ai-1 < Ai -> Ai > Ai+1 
+			if( ! (item[i-1] > item[i] && item[i] < item[i+1]) ) {
+				return false;
+			}
+		}
+	}
+	
+	return true;
 }
