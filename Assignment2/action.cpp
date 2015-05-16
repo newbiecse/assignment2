@@ -36,16 +36,16 @@
 */
 
 Word* getWord(string text);
-Meaning* getMeaning(Word &word, string textMeaning);
+Meaning set_meaning(string line);
 Instance* getExammple(Meaning &meaning, string textExample);
 
 string getWordItem(string text);
+WordType set_word_type(string line);
 
 /*
 *	string utility
 */
-string utilityGetSubString(string s);
-string getTextWordItem(string s);
+string utilityGetSubString(string s, char cStart, char cEnd);
 
 
 /*
@@ -172,33 +172,61 @@ bool search(Dictionary &dict, string name, Word &word) {
 */
 Word* getWord(string text) {
 	Word *word = new Word();
-	word->size = 1;
-	
+	word->size = 1;	
 
-	word->item = getWordItem(text);
+	istringstream f(text);
+    string line;
 
-	// get meanings
-	getMeaning(*word, text);
+	// item
+	getline(f, line);
+	word->item = getWordItem(line);
+
+	// meaning
+	int i = 0;
+    while (getline(f, line)) {
+		word->meaning[i] = set_meaning(line);
+    }
 
 	return word;
 }
 
+
+WordType set_word_type(string line) {
+	// get text
+	string textWordType = utilityGetSubString(line, '<', '>');
+
+	// process text
+	if(textWordType == "noun") {
+		return NOUN;
+	} else if(textWordType == "adjective") {
+		return ADJECTIVE;
+	} else {
+		return VERB;
+	}
+}
+
+
 /*
 *	get meaning from string
 */
-Meaning* getMeaning(Word &word, string textMeaning) {
-	// init meaning
+Meaning set_meaning(string line) {
+
+	// init
 	Meaning *meaning = new Meaning();
-	meaning->size = 1;
+
+	// word type
+	meaning->type = set_word_type(line);
+
+	// definition
 	meaning->definition = "difinition meaning";
-	meaning->type = NOUN;
 
-	// get examples
-	getExammple(*meaning, textMeaning);
+	// num examples
+	meaning->size = 1;
 
-	// append meaning
-	word.meaning[0] = *meaning;
-	return meaning;
+	// examples
+	getExammple(*meaning, line);
+
+	return *meaning;
 }
 
 /*
@@ -216,36 +244,22 @@ Instance* getExammple(Meaning &meaning, string textExample) {
 }
 
 
-string getWordItem(string text) {
-	string textWordItem = getTextWordItem(text);
-	string item = utilityGetSubString(textWordItem);
+string getWordItem(string textWordItem) {
+	string item = utilityGetSubString(textWordItem, '"', '"');
 	return item;
 }
 
 
-string utilityGetSubString(string s) {
-	char QUATOR = '"';	
+string utilityGetSubString(string s, char cStart, char cEnd) {
 	int start = 0;
 	int end = 0;
 	for(int i = 0; i < s.length(); i++) {
-		if(s[i] == QUATOR) {
-			if(start == 0) {
-				start = i + 1;
-			} else {
-				end = i;
-				break;
-			}
+		if(start == 0 && s[i] == cStart) {
+			start = i + 1;
+		} else if (s[i] == cEnd) {
+			end = i;
+			break;
 		}
 	}
 	return s.substr(start, end);
-}
-
-string getTextWordItem(string s) {
-	istringstream f(s);
-    string line;
-	getline(f, line);
-	return line;
-    //while (getline(f, line)) {
-    //    
-    //}
 }
