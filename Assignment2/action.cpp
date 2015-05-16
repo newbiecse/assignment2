@@ -41,12 +41,18 @@ Meaning set_meaning(string line);
 string getWordItem(string text);
 WordType set_word_type(string line);
 void doSelectionSort(Dictionary &dict);
+void removeByIndex(Dictionary &dict, int index);
 
 /*
 *	string utility
 */
 string utilityGetSubString(string s, char cStart, char cEnd);
 
+
+/**
+	Global variables
+*/
+int nIndexSearch = 0;
 
 /*
  *  Function Implementation
@@ -103,14 +109,14 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 			if(!isExists) {
 				insert(dict, *word);
 			}
-
-			// sort
-			doSelectionSort(dict);
 			
 			break;
 		}
 		case REMOVE: {
 			// TODO
+			Word *word = getWord(value);
+			remove(dict, word->item);
+
 			break;
 		}
 		case CRYSTAL: {
@@ -150,6 +156,9 @@ bool insert(Dictionary &dict, Word new_word) {
 	// update size
 	dict.size ++;
 
+	// sort
+	doSelectionSort(dict);
+
 	return false;
 }
 
@@ -162,6 +171,9 @@ bool insert(Dictionary &dict, Word new_word) {
  */
 bool remove(Dictionary &dict, string item) {
 	// TODO
+	Word *word = new Word();
+	bool isFound = search(dict, item, *word);
+	removeByIndex(dict, nIndexSearch);
 	return false;
 }
 
@@ -186,14 +198,14 @@ bool remove_by_crystal(Dictionary &dict) {
  */
 bool search(Dictionary &dict, string name, Word &word) {
 
-	string s1 = "abc";
-	string s2 = "abcd";
-	string s3 = "Abc";
-
-
 	// TODO
 	for(int i = 0; i < dict.size; i++) {
 		if(dict.words[i].item == name) {
+
+			// update index search
+			nIndexSearch = i;
+
+			// found word
 			word = dict.words[i];
 			return true;
 		}
@@ -340,4 +352,14 @@ void doSelectionSort(Dictionary &dict) {
             dict.words[index] = dict.words[i];
             dict.words[i] = wordSmaller;
         }
+}
+
+void removeByIndex(Dictionary &dict, int index) {
+	for (int i = index; i < dict.size - 1; i++) {
+		//int tmpIndex = i;
+		//Word wTemp = dict.words[i + 1];
+		dict.words[i] = dict.words[i + 1];
+    }
+	// update Dictionary size
+	dict.size --;
 }
