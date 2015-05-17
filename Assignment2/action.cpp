@@ -43,6 +43,7 @@ WordType set_word_type(string line);
 void doSelectionSort(Dictionary &dict);
 void removeByIndex(Dictionary &dict, int index);
 bool isTangGiamTuanHoan(string item);
+void export_error_message(ofstream &outFile, string msg);
 
 /*
 *	string utility
@@ -54,6 +55,7 @@ string utilityGetSubString(string s, char cStart, char cEnd);
 	Global variables
 */
 int nIndexSearch = 0;
+string error_messages = "";
 
 /*
  *  Function Implementation
@@ -143,7 +145,9 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 			bool isExists = search(dict, word->item, *word);
 
 			// insert
-			if(!isExists) {
+			if(isExists) {
+				export_error_message(outFile, ERROR_MESSAGE_1_1);
+			} else {
 				insert(dict, *word);
 			}
 			
@@ -152,7 +156,14 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 		case REMOVE: {
 			// TODO
 			Word *word = getWord(value);
-			remove(dict, word->item);
+
+			// word already exists
+			bool isExists = search(dict, word->item, *word);
+			if(!isExists) {
+				export_error_message(outFile, ERROR_MESSAGE_2_1);
+			} else {
+				remove(dict, word->item);
+			}
 
 			break;
 		}
@@ -163,6 +174,17 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 		}
 		case SEARCH: {
 			// TODO
+			Word *word = getWord(value);
+
+			// word already exists
+			bool isExists = search(dict, word->item, *word);
+
+			// insert
+			if(!isExists) {
+				export_error_message(outFile, ERROR_MESSAGE_3_1);
+			} else {
+				write_word(outFile, *word);
+			}
 			break;
 		}
 		case EXPORT: {
@@ -436,4 +458,8 @@ bool isTangGiamTuanHoan(string item) {
 	}
 	
 	return true;
+}
+
+void export_error_message(ofstream &outFile, string msg) {
+	outFile << msg + "\n";
 }
