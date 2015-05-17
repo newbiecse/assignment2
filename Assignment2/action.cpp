@@ -44,6 +44,7 @@ void doSelectionSort(Dictionary &dict);
 void removeByIndex(Dictionary &dict, int index);
 bool isTangGiamTuanHoan(string item);
 void export_error_message(ofstream &outFile, string msg);
+bool is_valid_word(Word word);
 
 /*
 *	string utility
@@ -138,17 +139,19 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
 			// TODO
 			Word *word = getWord(value);
 
-			// word hasn't meaning or example
-			// hasn't implement yet
-
-			// word already exists
-			bool isExists = search(dict, word->item, *word);
-
-			// insert
-			if(isExists) {
+			// validation word
+			if( !is_valid_word(*word) ) {
 				export_error_message(outFile, ERROR_MESSAGE_1_1);
 			} else {
-				insert(dict, *word);
+				// word already exists
+				bool isExists = search(dict, word->item, *word);
+
+				// insert
+				if(isExists) {
+					export_error_message(outFile, ERROR_MESSAGE_1_1);
+				} else {
+					insert(dict, *word);
+				}
 			}
 			
 			break;
@@ -462,4 +465,17 @@ bool isTangGiamTuanHoan(string item) {
 
 void export_error_message(ofstream &outFile, string msg) {
 	outFile << msg + "\n";
+}
+
+bool is_valid_word(Word word) {
+	if(word.size == 0) {
+		return false;
+	}
+	for(int i = 0; i < word.size; i++) {
+		if(word.meaning[i].size == 0) {
+			return false;
+		}
+	}
+
+	return true;
 }
