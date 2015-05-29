@@ -41,6 +41,7 @@ Meaning set_meaning(string line);
 
 string getWordItem(string text);
 WordType set_word_type(string line);
+void insert_not_sort(Dictionary &dict, Word new_word);
 void doSelectionSort(Dictionary &dict);
 void removeByIndex(Dictionary &dict, int index);
 bool isTangGiamTuanHoan(string item);
@@ -92,7 +93,8 @@ void load_dictionary(Dictionary &dict) {
 		if(str.substr(0, 2) == "<i") {		
 			if(i > 0) {
 				Word *word = getWord(value);
-				insert(dict, *word);
+				//insert(dict, *word);
+				insert_not_sort(dict, *word);
 				value = "";
 			}		
 		}
@@ -210,7 +212,16 @@ void do_action(Dictionary &dict, ActionsList actions, ofstream &outFile) {
  */
 bool insert(Dictionary &dict, Word new_word) {
 
-	if(dict.size < 0) {
+	insert_not_sort(dict, new_word);
+
+	// sort
+	doSelectionSort(dict);
+
+	return false;
+}
+
+void insert_not_sort(Dictionary &dict, Word new_word) {
+		if(dict.size < 0) {
 		dict.size = 0;
 	}
 
@@ -219,11 +230,6 @@ bool insert(Dictionary &dict, Word new_word) {
 
 	// update size
 	dict.size ++;
-
-	// sort
-	doSelectionSort(dict);
-
-	return false;
 }
 
 /*
