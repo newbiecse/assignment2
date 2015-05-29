@@ -32,6 +32,10 @@
 
 #include "dictionary.h"
 
+#define EQUAL	0
+#define LESS	-1
+#define THAN	1
+
 /*
 *	define methods
 */
@@ -44,9 +48,14 @@ WordType set_word_type(string line);
 void insert_not_sort(Dictionary &dict, Word new_word);
 void doSelectionSort(Dictionary &dict);
 void removeByIndex(Dictionary &dict, int index);
+string getCharacters(string item);
 bool isTangGiamTuanHoan(string item);
 void export_error_message(ofstream &outFile, string msg);
 bool is_valid_word(Word word);
+
+// alpha
+int compareChar(char c1, char c2);
+int compareAlphabetical(string item1, string item2);
 
 /*
 *	string utility
@@ -276,7 +285,7 @@ bool search(Dictionary &dict, string name, Word &word) {
 
 	// TODO
 	for(int i = 0; i < dict.size; i++) {
-		if(dict.words[i].item == name) {
+		if(compareAlphabetical(dict.words[i].item, name) == EQUAL) {
 
 			// update index search
 			nIndexSearch = i;
@@ -287,6 +296,39 @@ bool search(Dictionary &dict, string name, Word &word) {
 		}
 	}
 	return false;
+}
+
+int compareChar(char c1, char c2) {
+	char lowerC1 = tolower(c1);
+	char lowerC2 = tolower(c2);
+	if( lowerC1 == lowerC2) {
+		return EQUAL;
+	} else if (lowerC1 < lowerC2) {
+		return LESS;
+	} else {
+		return THAN;
+	}
+}
+
+int compareAlphabetical(string item1, string item2) {
+	int length1 = item1.length();
+	int length2 = item2.length();
+	int minLength = (length1 < length2) ? length1 : length2;
+
+	for(int i = 0; i < minLength; i++) {
+		int nCompare = compareChar(item1[i], item2[i]);
+		if( nCompare != EQUAL) {
+			return nCompare;
+		}
+	}
+
+	if(length1 < length2) {
+		return LESS;
+	} else if(length1 > length2) {
+		return THAN;
+	} else {
+		return EQUAL;
+	}
 }
 
 /*
@@ -421,7 +463,8 @@ void doSelectionSort(Dictionary &dict) {
         {
             int index = i;
 			for (int j = i + 1; j < dict.size; j++)
-				if (dict.words[j].item < dict.words[index].item)
+				//if (dict.words[j].item < dict.words[index].item)
+				if (compareAlphabetical(dict.words[j].item, dict.words[index].item) == LESS)
                     index = j;
       
             Word wordSmaller = dict.words[index]; 
@@ -440,28 +483,48 @@ void removeByIndex(Dictionary &dict, int index) {
 	dict.size --;
 }
 
+string getCharacters(string item) {
+	string result = "";
+	for(int i = 0; i < item.length(); i++) {
+		int nASCII = int(item[i]);
+		if(65 <= nASCII && nASCII <= 90 || 97 <= nASCII && nASCII <= 122) {
+			result += item[i];
+		}
+	}
+	return result;
+}
+
 bool isTangGiamTuanHoan(string item) {
 
-	int len = item.length();
+	string arrChacracters = getCharacters(item);
+
+	int len = arrChacracters.length();
+
+	// 0 or 1 element
 	if(len == 0 || len == 1) {
 		return true;
-	} else if(len == 2) {
-		if(item[0] != item[1]) {
+	}
+	
+	// 2 elements
+	if(len == 2) {
+		if(arrChacracters[0] != arrChacracters[1]) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 
-	if(item[0] < item[1]) {
+	if(arrChacracters[0] < arrChacracters[1]) {
 		for(int i = 1; i < len - 1; i++) {
 			// Ai-1 < Ai -> Ai > Ai+1 
-			if( ! (item[i-1] < item[i] && item[i] > item[i+1]) ) {
+			if( ! (arrChacracters[i-1] < arrChacracters[i] && arrChacracters[i] > arrChacracters[i+1]) ) {
 				return false;
 			}
 		}
 	} else {
 		for(int i = 1; i < len - 1; i++) {
 			// Ai-1 < Ai -> Ai > Ai+1 
-			if( ! (item[i-1] > item[i] && item[i] < item[i+1]) ) {
+			if( ! (arrChacracters[i-1] > arrChacracters[i] && arrChacracters[i] < arrChacracters[i+1]) ) {
 				return false;
 			}
 		}
