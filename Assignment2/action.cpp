@@ -4,6 +4,7 @@
  * Project: assignment 2 - programming fundamental
  * Description: this file implements for basic functions on Dictionary 
  * structure
+ * Pass: R1K8K3X3U1G5C7X0P0K2N5H6
  */
 
 /*
@@ -468,14 +469,19 @@ void export_error_message(ofstream &outFile, string msg) {
 }
 
 bool is_valid_word(Word word) {
+
+	// at leat 1 meaning
 	if(word.size == 0) {
 		return false;
 	}
+
+	// at leat 1 example
 	for(int i = 0; i < word.size; i++) {
-		if(word.meaning[i].size == 0) {
-			return false;
+		if(word.meaning[i].size > 0) {
+			return true;
 		}
 	}
+	
 
-	return true;
+	return false;
 }
